@@ -1,1 +1,237 @@
-[]
+[
+  {
+    "diaSemana": "Segunda-feira",
+    "periodos": [
+      {
+        "periodo": "Periodo-1",
+        "disciplina": "Matemática",
+        "horaInicioPeriodo": "07:40",
+        "horaFimPeriodo": "08:30",
+        "professor": "Jeniffer Karoline Medeiros Rosa"
+      },
+      {
+        "periodo": "Periodo-2",
+        "disciplina": "Matemática",
+        "horaInicioPeriodo": "08:30",
+        "horaFimPeriodo": "09:20",
+        "professor": "Jeniffer Karoline Medeiros Rosa"
+      },
+      {
+        "periodo": "Periodo-3",
+        "disciplina": "Física",
+        "horaInicioPeriodo": "09:20",
+        "horaFimPeriodo": "10:05",
+        "professor": "Paulo Eduardo Moncay Sartori"
+      },
+      {
+        "periodo": "Periodo-4",
+        "disciplina": "Educação Física",
+        "horaInicioPeriodo": "10:20",
+        "horaFimPeriodo": "11:10",
+        "professor": "Gerson Antunes Possamai"
+      },
+      {
+        "periodo": "Periodo-5",
+        "disciplina": "Educação Física",
+        "horaInicioPeriodo": "11:10",
+        "horaFimPeriodo": "12:00",
+        "professor": "Gerson Antunes Possamai"
+      },
+      {
+        "periodo": "Periodo-6",
+        "disciplina": "Física",
+        "horaInicioPeriodo": "12:00",
+        "horaFimPeriodo": "12:30",
+        "professor": "Paulo Eduardo Moncay Sartori"
+      }
+    ]
+  },
+  {
+    "diaSemana": "Terça-feira",
+    "periodos": [
+      {
+        "periodo": "Periodo-1",
+        "disciplina": "Literatura",
+        "horaInicioPeriodo": "07:40",
+        "horaFimPeriodo": "08:30",
+        "professor": "Maria Eloisa Rodrigues Nunes"
+      },
+      {
+        "periodo": "Periodo-2",
+        "disciplina": "Português",
+        "horaInicioPeriodo": "08:30",
+        "horaFimPeriodo": "09:20",
+        "professor": "Maria Eloisa Rodrigues Nunes"
+      },
+      {
+        "periodo": "Periodo-3",
+        "disciplina": "Português",
+        "horaInicioPeriodo": "09:20",
+        "horaFimPeriodo": "10:05",
+        "professor": "Maria Eloisa Rodrigues Nunes"
+      },
+      {
+        "periodo": "Periodo-4",
+        "disciplina": "Geografia",
+        "horaInicioPeriodo": "10:20",
+        "horaFimPeriodo": "11:10",
+        "professor": "Elaine de Fatima Pereira Culau"
+      },
+      {
+        "periodo": "Periodo-5",
+        "disciplina": "Química",
+        "horaInicioPeriodo": "11:10",
+        "horaFimPeriodo": "12:00",
+        "professor": "Ricardo Baggio Frigo"
+      },
+      {
+        "periodo": "Periodo-6",
+        "disciplina": "Química",
+        "horaInicioPeriodo": "12:00",
+        "horaFimPeriodo": "12:30",
+        "professor": "Ricardo Baggio Frigo"
+      }
+    ]
+  },
+  {
+    "diaSemana": "Quarta-feira",
+    "periodos": [
+      {
+        "periodo": "Periodo-1",
+        "disciplina": "História",
+        "horaInicioPeriodo": "07:40",
+        "horaFimPeriodo": "08:30",
+        "professor": "Genuisso de Oliveira Coimbra"
+      },
+      {
+        "periodo": "Periodo-2",
+        "disciplina": "História",
+        "horaInicioPeriodo": "08:30",
+        "horaFimPeriodo": "09:20",
+        "professor": "Genuisso de Oliveira Coimbra"
+      },
+      {
+        "periodo": "Periodo-3",
+        "disciplina": "Filosofia",
+        "horaInicioPeriodo": "09:20",
+        "horaFimPeriodo": "10:05",
+        "professor": "Genuisso de Oliveira Coimbra"
+      },
+      {
+        "periodo": "Periodo-4",
+        "disciplina": "Sociologia",
+        "horaInicioPeriodo": "10:20",
+        "horaFimPeriodo": "11:10",
+        "professor": "Genuisso de Oliveira Coimbra"
+      },
+      {
+        "periodo": "Periodo-5",
+        "disciplina": "Biologia",
+        "horaInicioPeriodo": "11:10",
+        "horaFimPeriodo": "12:00",
+        "professor": "Ricardo Barbosa Conti"
+      },
+      {
+        "periodo": "Periodo-6",
+        "disciplina": "Biologia",
+        "horaInicioPeriodo": "12:00",
+        "horaFimPeriodo": "12:30",
+        "professor": "Ricardo Barbosa Conti"
+      }
+    ]
+  },
+  {
+    "diaSemana": "Quinta-feira",
+    "periodos": [
+      {
+        "periodo": "Periodo-1",
+        "disciplina": "Redação",
+        "horaInicioPeriodo": "07:40",
+        "horaFimPeriodo": "08:30",
+        "professor": "Maria Eloisa Rodrigues Nunes"
+      },
+      {
+        "periodo": "Periodo-2",
+        "disciplina": "Redação",
+        "horaInicioPeriodo": "08:30",
+        "horaFimPeriodo": "09:20",
+        "professor": "Maria Eloisa Rodrigues Nunes"
+      },
+      {
+        "periodo": "Periodo-3",
+        "disciplina": "Inglês",
+        "horaInicioPeriodo": "09:20",
+        "horaFimPeriodo": "10:05",
+        "professor": "Fernanda dos Santos Lemos"
+      },
+      {
+        "periodo": "Periodo-4",
+        "disciplina": "Geografia",
+        "horaInicioPeriodo": "10:20",
+        "horaFimPeriodo": "11:10",
+        "professor": "Elaine de Fatima Pereira Culau"
+      },
+      {
+        "periodo": "Periodo-5",
+        "disciplina": "Português",
+        "horaInicioPeriodo": "11:10",
+        "horaFimPeriodo": "12:00",
+        "professor": "Maria Eloisa Rodrigues Nunes"
+      },
+      {
+        "periodo": "Periodo-6",
+        "disciplina": "Português",
+        "horaInicioPeriodo": "12:00",
+        "horaFimPeriodo": "12:30",
+        "professor": "Maria Eloisa Rodrigues Nunes"
+      }
+    ]
+  },
+  {
+    "diaSemana": "Sexta-feira",
+    "periodos": [
+      {
+        "periodo": "Periodo-1",
+        "disciplina": "Artes",
+        "horaInicioPeriodo": "07:40",
+        "horaFimPeriodo": "08:30",
+        "professor": "Cristina Castro da Silva"
+      },
+      {
+        "periodo": "Periodo-2",
+        "disciplina": "Matemática",
+        "horaInicioPeriodo": "08:30",
+        "horaFimPeriodo": "09:20",
+        "professor": "Jeniffer Karoline Medeiros Rosa"
+      },
+      {
+        "periodo": "Periodo-3",
+        "disciplina": "Matemática",
+        "horaInicioPeriodo": "09:20",
+        "horaFimPeriodo": "10:05",
+        "professor": "Jeniffer Karoline Medeiros Rosa"
+      },
+      {
+        "periodo": "Periodo-4",
+        "disciplina": "Matemática",
+        "horaInicioPeriodo": "10:20",
+        "horaFimPeriodo": "11:10",
+        "professor": "Jeniffer Karoline Medeiros Rosa"
+      },
+      {
+        "periodo": "Periodo-5",
+        "disciplina": "Res. de Problemas",
+        "horaInicioPeriodo": "11:10",
+        "horaFimPeriodo": "12:00",
+        "professor": "Rosimeri Silveira Feck"
+      },
+      {
+        "periodo": "Periodo-6",
+        "disciplina": "Res. de Problemas",
+        "horaInicioPeriodo": "12:00",
+        "horaFimPeriodo": "12:30",
+        "professor": "Rosimeri Silveira Feck"
+      }
+    ]
+  }
+]
