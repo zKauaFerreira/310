@@ -28,7 +28,7 @@ const HEADERS = {
 
 const GITHUB_OWNER = "zkauaferreira"; // exatamente como na URL desejada
 const GITHUB_REPO = "310";
-const GITHUB_BRANCH = "main";
+const GITHUB_BRANCH = "gpgs";
 const FILE_PATH = "gradeHoraria.json";
 
 async function fetchAndProcessSchedule() {
