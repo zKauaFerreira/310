@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade - 310</title>
+  <link rel="preload" href="background.jpg" as="image">
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Font Awesome 4.7.0 -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="header-title">Grade - 310</span>
+      <button id="share-btn" title="Compartilhar"><i class="fa fa-share-square-o"></i></button>
+    </header>
+    <div id="day-nav"></div>
+    <main id="schedule-container">
+      <p>Carregando dados...</p>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <!-- O conteúdo do modal será injetado via JS -->
+    </div>
+  </div>
+
+  <script src="scripts.js"></script>
+  <!-- Biblioteca para captura de tela -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
