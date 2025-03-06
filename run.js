@@ -1,6 +1,5 @@
 const fs = require('fs');
-
-// Em Node 18+ o fetch é global; se estiver usando uma versão mais antiga, instale e importe o node-fetch.
+const axios = require('axios');
 
 const API_AUTHORIZATION = process.env.API_AUTHORIZATION;
 const GH_PAT = process.env.GH_PAT; // GitHub Personal Access Token
@@ -36,12 +35,8 @@ const COMMIT_MESSAGE = "🔄 Atualização automática da grade horária";
 
 async function fetchAndProcessSchedule() {
   try {
-    const response = await fetch(API_URL, { method: "GET", headers: HEADERS });
-    if (!response.ok) {
-      throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    const response = await axios.get(API_URL, { headers: HEADERS });
+    const data = response.data;
 
     if (!data.alunos || !Array.isArray(data.alunos)) {
       throw new Error("A propriedade 'alunos' não foi encontrada na resposta.");
@@ -61,7 +56,6 @@ async function fetchAndProcessSchedule() {
 
     // Agrupa as informações por dia da semana e, dentro dele, por período.
     const grouped = {};
-
     for (const dia of gradeHoraria) {
       const diaSemana = dia.diaSemana;
       if (!grouped[diaSemana]) {
@@ -80,7 +74,7 @@ async function fetchAndProcessSchedule() {
                 periodo = "Sem-Periodo";
               }
               
-              // Modifica o nome da disciplina, se necessário.
+              // Ajusta o nome da disciplina conforme necessário.
               let disciplina = aula.disciplina;
               if (disciplina === "Língua Estrangeira - Língua Inglesa") {
                 disciplina = "Inglês";
@@ -94,7 +88,7 @@ async function fetchAndProcessSchedule() {
               if (disciplina === "Arte") {
                 disciplina = "Artes";
               }
-
+              
               // Ajustes nos horários de término
               let horaFimPeriodo = aula.horaFimPeriodo;
               if (periodo === "Periodo-3") {
@@ -134,7 +128,6 @@ async function fetchAndProcessSchedule() {
       });
     }
 
-    // Em vez de salvar localmente, comita o arquivo no repositório via GitHub API
     const contentString = JSON.stringify(result, null, 2);
     await commitFileToRepo(contentString);
     console.log("✅ Grade horária atualizada e commit realizado no repositório");
@@ -148,46 +141,46 @@ async function commitFileToRepo(content) {
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
   const encodedContent = Buffer.from(content).toString('base64');
 
-  // Tenta obter o SHA do arquivo existente (caso exista)
   let sha;
   try {
-    const getResponse = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, {
+    const getResponse = await axios.get(apiUrl, {
       headers: {
-        "Authorization": `token ${GH_PAT}`,
-        "Accept": "application/vnd.github+json"
+        Authorization: `token ${GH_PAT}`,
+        Accept: 'application/vnd.github.v3+json'
+      },
+      params: {
+        ref: GITHUB_BRANCH
       }
     });
-    if (getResponse.ok) {
-      const fileData = await getResponse.json();
-      sha = fileData.sha;
-    }
+    sha = getResponse.data.sha;
   } catch (err) {
-    console.error("Não foi possível obter o SHA do arquivo (pode ser que o arquivo não exista):", err);
+    // Se o erro for 404, significa que o arquivo ainda não existe; caso contrário, lança o erro.
+    if (err.response && err.response.status !== 404) {
+      throw new Error(`Erro ao obter o SHA do arquivo: ${err.response.status} ${err.response.statusText}`);
+    }
   }
 
   const body = {
     message: COMMIT_MESSAGE,
     content: encodedContent,
-    branch: GITHUB_BRANCH,
+    branch: GITHUB_BRANCH
   };
-
   if (sha) {
     body.sha = sha;
   }
 
-  const putResponse = await fetch(apiUrl, {
-    method: "PUT",
-    headers: {
-      "Authorization": `token ${GH_PAT}`,
-      "Accept": "application/vnd.github+json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!putResponse.ok) {
-    const errText = await putResponse.text();
-    throw new Error(`Erro ao fazer commit: ${putResponse.status} ${putResponse.statusText} - ${errText}`);
+  try {
+    const putResponse = await axios.put(apiUrl, body, {
+      headers: {
+        Authorization: `token ${GH_PAT}`,
+        Accept: 'application/vnd.github.v3+json',
+        "Content-Type": "application/json"
+      }
+    });
+    console.log("Commit realizado com sucesso:", putResponse.data);
+  } catch (err) {
+    const errText = err.response ? JSON.stringify(err.response.data) : err.message;
+    throw new Error(`Erro ao fazer commit: ${err.response.status} ${err.response.statusText} - ${errText}`);
   }
 }
 
