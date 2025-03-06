@@ -27,7 +27,7 @@ const HEADERS = {
   "Referrer-Policy": "strict-origin-when-cross-origin"
 };
 
-const GITHUB_OWNER = "zKauaFerreira";
+const GITHUB_OWNER = "zkauaferreira"; // Ajustado para usar exatamente "zkauaferreira"
 const GITHUB_REPO = "310";
 const GITHUB_BRANCH = "node";
 const FILE_PATH = "gradeHoraria.json";
@@ -154,7 +154,6 @@ async function commitFileToRepo(content) {
     });
     sha = getResponse.data.sha;
   } catch (err) {
-    // Se o erro for 404, significa que o arquivo ainda não existe; caso contrário, lança o erro.
     if (err.response && err.response.status !== 404) {
       throw new Error(`Erro ao obter o SHA do arquivo: ${err.response.status} ${err.response.statusText}`);
     }
