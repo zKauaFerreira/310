@@ -1,0 +1,37 @@
+name: Atualizar Grade Horária
+
+on:
+  workflow_dispatch: # Permite rodar manualmente
+  schedule:
+    - cron: "30 10 * * *"  # 07:30 AM BRT
+    - cron: "35 15 * * *"  # 12:35 PM BRT
+    - cron: "0 3 * * *"    # 00:00 AM BRT
+
+jobs:
+  update-schedule:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar repositório
+        uses: actions/checkout@v3
+
+      - name: 🛠 Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📦 Instalar dependências
+        run: npm install
+
+      - name: 📡 Rodar script para atualizar a grade horária
+        env:
+          API_AUTHORIZATION: ${{ secrets.API_AUTHORIZATION }}
+        run: node fetchSchedule.js
+
+      - name: 📤 Commit e push sempre
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gradeHoraria.json
+          git commit -m "🔄 Atualização automática da grade horária" --allow-empty
+          git push
