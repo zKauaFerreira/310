@@ -1,7 +1,20 @@
 const fs = require('fs');
-// Para Node < 18, descomente a linha abaixo e instale o node-fetch:
-// const fetch = require('node-fetch');
+
+// Em Node 18+ o fetch é global; se estiver usando uma versão mais antiga, instale e importe o node-fetch.
+ 
 const API_AUTHORIZATION = process.env.API_AUTHORIZATION;
+const GH_PAT = process.env.GH_PAT; // GitHub Personal Access Token
+
+if (!API_AUTHORIZATION) {
+  console.error("❌ ERRO: A variável de ambiente 'API_AUTHORIZATION' não está definida.");
+  process.exit(1);
+}
+
+if (!GH_PAT) {
+  console.error("❌ ERRO: A variável de ambiente 'GH_PAT' não está definida.");
+  process.exit(1);
+}
+
 const API_URL = "https://secweb.procergs.com.br/ise-escolars-estudante/rest/estudante/cidadao/05099946011/alunos-dashboard?versaoEndpoint=v2";
 
 const HEADERS = {
@@ -15,7 +28,13 @@ const HEADERS = {
   "Referrer-Policy": "strict-origin-when-cross-origin"
 };
 
-async function fetchAndSaveSchedule() {
+const GITHUB_OWNER = "zKauaFerreira";
+const GITHUB_REPO = "310";
+const GITHUB_BRANCH = "node";
+const FILE_PATH = "gradeHoraria.json";
+const COMMIT_MESSAGE = "🔄 Atualização automática da grade horária";
+
+async function fetchAndProcessSchedule() {
   try {
     const response = await fetch(API_URL, { method: "GET", headers: HEADERS });
     if (!response.ok) {
@@ -41,15 +60,12 @@ async function fetchAndSaveSchedule() {
     }
 
     // Agrupa as informações por dia da semana e, dentro dele, por período.
-    // Para cada aula, extrai:
-    //   - Período (convertido para o formato "Periodo-X")
-    //   - Disciplina, hora de início, hora de fim e o primeiro professor
-    const grouped = {}; // Estrutura: { "Segunda-feira": { "Periodo-1": {…}, "Periodo-2": {…} }, ... }
+    const grouped = {};
 
     for (const dia of gradeHoraria) {
       const diaSemana = dia.diaSemana;
       if (!grouped[diaSemana]) {
-        grouped[diaSemana] = {}; // Inicializa o agrupamento para o dia
+        grouped[diaSemana] = {};
       }
       if (dia.turnos && Array.isArray(dia.turnos)) {
         for (const turno of dia.turnos) {
@@ -64,7 +80,7 @@ async function fetchAndSaveSchedule() {
                 periodo = "Sem-Periodo";
               }
               
-              // Aplica as modificações solicitadas para a disciplina
+              // Modifica o nome da disciplina, se necessário.
               let disciplina = aula.disciplina;
               if (disciplina === "Língua Estrangeira - Língua Inglesa") {
                 disciplina = "Inglês";
@@ -79,22 +95,20 @@ async function fetchAndSaveSchedule() {
                 disciplina = "Artes";
               }
 
-              // MODIFICAÇÕES AQUI: Ajustes nos horários de término
+              // Ajustes nos horários de término
               let horaFimPeriodo = aula.horaFimPeriodo;
               if (periodo === "Periodo-3") {
                 horaFimPeriodo = "10:05";
               }
               if (periodo === "Periodo-6") {
-                horaFimPeriodo = "12:30"; // Nova modificação para o período 6
+                horaFimPeriodo = "12:30";
               }
 
-              // Se houver mais de uma aula para o mesmo período, você pode optar por agrupar em um array.
-              // Aqui, assumimos que cada período possui apenas uma entrada.
               if (!grouped[diaSemana][periodo]) {
                 grouped[diaSemana][periodo] = {
                   disciplina: disciplina,
                   horaInicioPeriodo: aula.horaInicioPeriodo,
-                  horaFimPeriodo: horaFimPeriodo, // Usa a variável modificada
+                  horaFimPeriodo: horaFimPeriodo,
                   professor: (aula.professores && aula.professores.length > 0) ? aula.professores[0].nome : ""
                 };
               }
@@ -104,8 +118,7 @@ async function fetchAndSaveSchedule() {
       }
     }
 
-    // Converte a estrutura agrupada para um array, onde cada dia da semana é o objeto principal
-    // e seus períodos são armazenados em um array interno.
+    // Converte a estrutura agrupada para um array
     const result = [];
     for (const dia in grouped) {
       const periodosArray = [];
@@ -121,12 +134,61 @@ async function fetchAndSaveSchedule() {
       });
     }
 
-    fs.writeFileSync('gradeHoraria.json', JSON.stringify(result, null, 2));
-    console.log("✅ Grade horária agrupada salva em 'gradeHoraria.json'");
-    
+    // Em vez de salvar localmente, comita o arquivo no repositório via GitHub API
+    const contentString = JSON.stringify(result, null, 2);
+    await commitFileToRepo(contentString);
+    console.log("✅ Grade horária atualizada e commit realizado no repositório");
+
   } catch (error) {
-    console.error("❌ Erro ao fazer fetch ou salvar os dados:", error);
+    console.error("❌ Erro ao fazer fetch ou atualizar os dados:", error);
   }
 }
 
-fetchAndSaveSchedule();
+async function commitFileToRepo(content) {
+  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
+  const encodedContent = Buffer.from(content).toString('base64');
+
+  // Tenta obter o SHA do arquivo existente (caso exista)
+  let sha;
+  try {
+    const getResponse = await fetch(`${apiUrl}?ref=${GITHUB_BRANCH}`, {
+      headers: {
+        "Authorization": `token ${GH_PAT}`,
+        "Accept": "application/vnd.github+json"
+      }
+    });
+    if (getResponse.ok) {
+      const fileData = await getResponse.json();
+      sha = fileData.sha;
+    }
+  } catch (err) {
+    console.error("Não foi possível obter o SHA do arquivo (pode ser que o arquivo não exista):", err);
+  }
+
+  const body = {
+    message: COMMIT_MESSAGE,
+    content: encodedContent,
+    branch: GITHUB_BRANCH,
+  };
+
+  if (sha) {
+    body.sha = sha;
+  }
+
+  const putResponse = await fetch(apiUrl, {
+    method: "PUT",
+    headers: {
+      "Authorization": `token ${GH_PAT}`,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!putResponse.ok) {
+    const errText = await putResponse.text();
+    throw new Error(`Erro ao fazer commit: ${putResponse.status} ${putResponse.statusText} - ${errText}`);
+  }
+}
+
+fetchAndProcessSchedule();
