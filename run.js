@@ -27,9 +27,9 @@ const HEADERS = {
   "Referrer-Policy": "strict-origin-when-cross-origin"
 };
 
-const GITHUB_OWNER = "zkauaferreira"; // Ajustado para usar exatamente "zkauaferreira"
+const GITHUB_OWNER = "zkauaferreira"; // exatamente como na URL desejada
 const GITHUB_REPO = "310";
-const GITHUB_BRANCH = "node";
+const GITHUB_BRANCH = "main";
 const FILE_PATH = "gradeHoraria.json";
 const COMMIT_MESSAGE = "🔄 Atualização automática da grade horária";
 
@@ -74,7 +74,6 @@ async function fetchAndProcessSchedule() {
                 periodo = "Sem-Periodo";
               }
               
-              // Ajusta o nome da disciplina conforme necessário.
               let disciplina = aula.disciplina;
               if (disciplina === "Língua Estrangeira - Língua Inglesa") {
                 disciplina = "Inglês";
@@ -89,7 +88,6 @@ async function fetchAndProcessSchedule() {
                 disciplina = "Artes";
               }
               
-              // Ajustes nos horários de término
               let horaFimPeriodo = aula.horaFimPeriodo;
               if (periodo === "Periodo-3") {
                 horaFimPeriodo = "10:05";
@@ -141,19 +139,18 @@ async function commitFileToRepo(content) {
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
   const encodedContent = Buffer.from(content).toString('base64');
 
+  // Tenta obter o SHA do arquivo sem passar o parâmetro de branch na requisição GET
   let sha;
   try {
     const getResponse = await axios.get(apiUrl, {
       headers: {
         Authorization: `token ${GH_PAT}`,
         Accept: 'application/vnd.github.v3+json'
-      },
-      params: {
-        ref: GITHUB_BRANCH
       }
-    });
-    sha = getResponse.data.sha;
+    }).catch(() => null);
+    sha = getResponse && getResponse.data ? getResponse.data.sha : null;
   } catch (err) {
+    // Se o erro não for 404, lança
     if (err.response && err.response.status !== 404) {
       throw new Error(`Erro ao obter o SHA do arquivo: ${err.response.status} ${err.response.statusText}`);
     }
@@ -162,7 +159,7 @@ async function commitFileToRepo(content) {
   const body = {
     message: COMMIT_MESSAGE,
     content: encodedContent,
-    branch: GITHUB_BRANCH
+    branch: GITHUB_BRANCH // Define explicitamente a branch de commit
   };
   if (sha) {
     body.sha = sha;
@@ -172,8 +169,7 @@ async function commitFileToRepo(content) {
     const putResponse = await axios.put(apiUrl, body, {
       headers: {
         Authorization: `token ${GH_PAT}`,
-        Accept: 'application/vnd.github.v3+json',
-        "Content-Type": "application/json"
+        Accept: 'application/vnd.github.v3+json'
       }
     });
     console.log("Commit realizado com sucesso:", putResponse.data);
