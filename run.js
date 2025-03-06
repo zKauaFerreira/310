@@ -52,7 +52,7 @@ async function fetchAndProcessSchedule() {
       throw new Error("A propriedade 'gradeHoraria' não foi encontrada em nenhum aluno.");
     }
 
-    // Agrupa as informações por dia da semana e por período
+    // Agrupa as informações por dia da semana e por período.
     const grouped = {};
     for (const dia of gradeHoraria) {
       const diaSemana = dia.diaSemana;
@@ -125,9 +125,10 @@ async function commitFileToRepo(content) {
     sha = shaResponse.data.sha;
   }
 
-  // Cria a mensagem de commit com a data/hora atual (fuso horário configurado no runner)
-  const currentDate = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-  const commitMessage = `🔄 Atualização automática da grade horária - Commit em ${currentDate}`;
+  // Formata a data e hora atual separadamente (fuso: America/Sao_Paulo)
+  const today = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const now = new Date().toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const commitMessage = `🔄 Atualização automática! Em ${today}, ${now}.`;
 
   const body = {
     message: commitMessage,
@@ -143,8 +144,6 @@ async function commitFileToRepo(content) {
         Accept: 'application/vnd.github.v3+json'
       }
     });
-    // Exibe apenas uma mensagem simples sem os detalhes do commit
-    console.log("✅ Grade horária atualizada e commit realizado no repositório");
   } catch (err) {
     const errText = err.response ? JSON.stringify(err.response.data) : err.message;
     throw new Error(`Erro ao fazer commit: ${err.response.status} ${err.response.statusText} - ${errText}`);
