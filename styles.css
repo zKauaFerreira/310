@@ -72,6 +72,23 @@ header {
 .header-title {
   display: inline-block;
 }
+.period-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  box-shadow: 0 0 10px 2px #BD93F9;
+  height: 3px;
+  background: #ffffff;
+  width: var(--progress, 0%);
+  transition: width 0.5s ease;
+}
+
+.cardDisciplinaContainer {
+  position: relative;
+  overflow: hidden;
+  
+}
+
 
 /* Botão de Compartilhar */
 #share-btn {

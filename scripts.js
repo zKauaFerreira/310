@@ -10,9 +10,28 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   let gradeData = [];
-  let currentTime = null;
+  let currentTime = new Date(); // Usa o tempo real
   let currentDay = null;
   let activeDay = null;
+  const reloadTimes = ['7:40', '8:30', '9:20', '10:20', '11:10', '12:00', '12:30'];
+  let lastReloadCheck = '';
+
+  // Atualiza o tempo real a cada segundo
+  setInterval(() => {
+    currentTime = new Date();
+    
+    // Verifica se precisa recarregar
+    const currentHours = currentTime.getHours().toString().padStart(2, '0');
+    const currentMinutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const current = `${currentHours}:${currentMinutes}`;
+    
+    if(reloadTimes.includes(current) && current !== lastReloadCheck) {
+      lastReloadCheck = current;
+      location.reload();
+    }
+    
+    updateCurrentPeriodProgress();
+  }, 1000);
 
   const dayNav = document.getElementById('day-nav');
   
@@ -58,9 +77,24 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    currentTime = today;
     activeDay = todayItem.diaSemana;
-    displaySchedule(todayItem.diaSemana, today);
+    displaySchedule(todayItem.diaSemana);
+  }
+
+  function updateCurrentPeriodProgress() {
+    document.querySelectorAll('.current-period').forEach(element => {
+      const periodo = element.periodoData;
+      const start = convertToMinutes(periodo.horaInicioPeriodo);
+      const end = convertToMinutes(periodo.horaFimPeriodo);
+      const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+      
+      const progress = Math.min(
+        Math.max((currentMinutes - start) / (end - start) * 100, 0),
+        100
+      );
+
+      element.style.setProperty('--progress', `${progress}%`);
+    });
   }
 
   function getNextWeekday(currentDayNum) {
@@ -96,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  function displaySchedule(diaSemana, time) {
+  function displaySchedule(diaSemana) {
     const container = document.getElementById('schedule-container');
     container.innerHTML = '';
 
@@ -106,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    currentTime = time || currentTime;
     activeDay = diaSemana;
 
     daySchedule.periodos.forEach((periodo, index) => {
@@ -118,9 +151,22 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
 
       if (diaSemana === currentDay && isCurrentPeriod(periodo, currentTime)) {
+        periodoElement.classList.add('current-period');
+        periodoElement.periodoData = periodo;
+        periodoElement.querySelector('div:last-child').style.fontSize = '1.8em'
+        periodoElement.querySelector('div:last-child').style.fontWeight = '700'
         periodoElement.style.backgroundColor = 'rgba(189, 147, 249, 0.2)';
+        periodoElement.style.position = 'relative';
         periodoElement.style.border = '2px solid #BD93F9';
         periodoElement.style.boxShadow = '0 0 15px rgba(189, 147, 249, 0.4)';
+        
+        // Cria a barra de progresso
+        const progressBar = document.createElement('div');
+        progressBar.className = 'period-progress';
+        periodoElement.appendChild(progressBar);
+        
+        // Atualiza o progresso imediatamente
+        updateCurrentPeriodProgress();
       }
 
       periodoElement.addEventListener('click', () => {
