@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 // Em Node 18+ o fetch é global; se estiver usando uma versão mais antiga, instale e importe o node-fetch.
- 
+
 const API_AUTHORIZATION = process.env.API_AUTHORIZATION;
 const GH_PAT = process.env.GH_PAT; // GitHub Personal Access Token
 

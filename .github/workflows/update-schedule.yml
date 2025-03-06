@@ -28,12 +28,3 @@ jobs:
           API_AUTHORIZATION: ${{ secrets.API_AUTHORIZATION }}
           GH_PAT: ${{ secrets.GH_PAT }}
         run: node run.js
-
-
-      - name: 📤 Commit e push sempre
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add gradeHoraria.json
-          git commit -m "🔄 Atualização automática da grade horária" --allow-empty
-          git push
