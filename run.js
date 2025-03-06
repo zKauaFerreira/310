@@ -1,4 +1,3 @@
-const fs = require('fs');
 const axios = require('axios');
 
 const API_AUTHORIZATION = process.env.API_AUTHORIZATION;
@@ -31,7 +30,6 @@ const GITHUB_OWNER = "zkauaferreira"; // exatamente como na URL desejada
 const GITHUB_REPO = "310";
 const GITHUB_BRANCH = "main";
 const FILE_PATH = "gradeHoraria.json";
-const COMMIT_MESSAGE = "🔄 Atualização automática da grade horária";
 
 async function fetchAndProcessSchedule() {
   try {
@@ -54,48 +52,31 @@ async function fetchAndProcessSchedule() {
       throw new Error("A propriedade 'gradeHoraria' não foi encontrada em nenhum aluno.");
     }
 
-    // Agrupa as informações por dia da semana e, dentro dele, por período.
+    // Agrupa as informações por dia da semana e por período
     const grouped = {};
     for (const dia of gradeHoraria) {
       const diaSemana = dia.diaSemana;
-      if (!grouped[diaSemana]) {
-        grouped[diaSemana] = {};
-      }
+      if (!grouped[diaSemana]) grouped[diaSemana] = {};
       if (dia.turnos && Array.isArray(dia.turnos)) {
         for (const turno of dia.turnos) {
           if (turno.aulas && Array.isArray(turno.aulas)) {
             for (const aula of turno.aulas) {
               let periodoRaw = aula.periodo || "";
-              let periodo;
+              let periodo = "";
               if (periodoRaw) {
                 const num = parseInt(periodoRaw);
                 periodo = isNaN(num) ? periodoRaw : `Periodo-${num}`;
               } else {
                 periodo = "Sem-Periodo";
               }
-              
               let disciplina = aula.disciplina;
-              if (disciplina === "Língua Estrangeira - Língua Inglesa") {
-                disciplina = "Inglês";
-              }
-              if (disciplina === "Resolução de Problemas") {
-                disciplina = "Res. de Problemas";
-              }
-              if (disciplina === "Língua Portuguesa") {
-                disciplina = "Português";
-              }
-              if (disciplina === "Arte") {
-                disciplina = "Artes";
-              }
-              
+              if (disciplina === "Língua Estrangeira - Língua Inglesa") disciplina = "Inglês";
+              if (disciplina === "Resolução de Problemas") disciplina = "Res. de Problemas";
+              if (disciplina === "Língua Portuguesa") disciplina = "Português";
+              if (disciplina === "Arte") disciplina = "Artes";
               let horaFimPeriodo = aula.horaFimPeriodo;
-              if (periodo === "Periodo-3") {
-                horaFimPeriodo = "10:05";
-              }
-              if (periodo === "Periodo-6") {
-                horaFimPeriodo = "12:30";
-              }
-
+              if (periodo === "Periodo-3") horaFimPeriodo = "10:05";
+              if (periodo === "Periodo-6") horaFimPeriodo = "12:30";
               if (!grouped[diaSemana][periodo]) {
                 grouped[diaSemana][periodo] = {
                   disciplina: disciplina,
@@ -115,21 +96,14 @@ async function fetchAndProcessSchedule() {
     for (const dia in grouped) {
       const periodosArray = [];
       for (const periodo in grouped[dia]) {
-        periodosArray.push({
-          periodo,
-          ...grouped[dia][periodo]
-        });
+        periodosArray.push({ periodo, ...grouped[dia][periodo] });
       }
-      result.push({
-        diaSemana: dia,
-        periodos: periodosArray
-      });
+      result.push({ diaSemana: dia, periodos: periodosArray });
     }
 
     const contentString = JSON.stringify(result, null, 2);
     await commitFileToRepo(contentString);
     console.log("✅ Grade horária atualizada e commit realizado no repositório");
-
   } catch (error) {
     console.error("❌ Erro ao fazer fetch ou atualizar os dados:", error);
   }
@@ -139,40 +113,38 @@ async function commitFileToRepo(content) {
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
   const encodedContent = Buffer.from(content).toString('base64');
 
-  // Tenta obter o SHA do arquivo sem passar o parâmetro de branch na requisição GET
-  let sha;
-  try {
-    const getResponse = await axios.get(apiUrl, {
-      headers: {
-        Authorization: `token ${GH_PAT}`,
-        Accept: 'application/vnd.github.v3+json'
-      }
-    }).catch(() => null);
-    sha = getResponse && getResponse.data ? getResponse.data.sha : null;
-  } catch (err) {
-    // Se o erro não for 404, lança
-    if (err.response && err.response.status !== 404) {
-      throw new Error(`Erro ao obter o SHA do arquivo: ${err.response.status} ${err.response.statusText}`);
+  // Obtém o SHA do arquivo se existir
+  let sha = null;
+  const shaResponse = await axios.get(apiUrl, {
+    headers: {
+      Authorization: `token ${GH_PAT}`,
+      Accept: 'application/vnd.github.v3+json'
     }
+  }).catch(() => null);
+  if (shaResponse && shaResponse.data) {
+    sha = shaResponse.data.sha;
   }
+
+  // Cria a mensagem de commit com a data/hora atual (fuso horário configurado no runner)
+  const currentDate = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const commitMessage = `🔄 Atualização automática da grade horária - Commit em ${currentDate}`;
 
   const body = {
-    message: COMMIT_MESSAGE,
+    message: commitMessage,
     content: encodedContent,
-    branch: GITHUB_BRANCH // Define explicitamente a branch de commit
+    branch: GITHUB_BRANCH
   };
-  if (sha) {
-    body.sha = sha;
-  }
+  if (sha) body.sha = sha;
 
   try {
-    const putResponse = await axios.put(apiUrl, body, {
+    await axios.put(apiUrl, body, {
       headers: {
         Authorization: `token ${GH_PAT}`,
         Accept: 'application/vnd.github.v3+json'
       }
     });
-    console.log("Commit realizado com sucesso:", putResponse.data);
+    // Exibe apenas uma mensagem simples sem os detalhes do commit
+    console.log("✅ Grade horária atualizada e commit realizado no repositório");
   } catch (err) {
     const errText = err.response ? JSON.stringify(err.response.data) : err.message;
     throw new Error(`Erro ao fazer commit: ${err.response.status} ${err.response.statusText} - ${errText}`);
