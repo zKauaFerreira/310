@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const API_AUTHORIZATION = process.env.API_AUTHORIZATION;
-const GH_PAT = process.env.GH_PAT; // GitHub Personal Access Token
+const GH_PAT = process.env.GH_PAT;
 
 if (!API_AUTHORIZATION) {
   console.error("❌ ERRO: A variável de ambiente 'API_AUTHORIZATION' não está definida.");
@@ -26,7 +26,7 @@ const HEADERS = {
   "Referrer-Policy": "strict-origin-when-cross-origin"
 };
 
-const GITHUB_OWNER = "zkauaferreira"; // exatamente como na URL desejada
+const GITHUB_OWNER = "zkauaferreira";
 const GITHUB_REPO = "310";
 const GITHUB_BRANCH = "gpgs";
 const FILE_PATH = "gradeHoraria.json";
@@ -40,7 +40,6 @@ async function fetchAndProcessSchedule() {
       throw new Error("A propriedade 'alunos' não foi encontrada na resposta.");
     }
 
-    // Procura pela gradeHoraria no primeiro aluno que a possuir
     let gradeHoraria;
     for (const aluno of data.alunos) {
       if (aluno.gradeHoraria) {
@@ -52,7 +51,6 @@ async function fetchAndProcessSchedule() {
       throw new Error("A propriedade 'gradeHoraria' não foi encontrada em nenhum aluno.");
     }
 
-    // Agrupa as informações por dia da semana e por período.
     const grouped = {};
     for (const dia of gradeHoraria) {
       const diaSemana = dia.diaSemana;
@@ -91,7 +89,6 @@ async function fetchAndProcessSchedule() {
       }
     }
 
-    // Converte a estrutura agrupada para um array
     const result = [];
     for (const dia in grouped) {
       const periodosArray = [];
@@ -113,19 +110,28 @@ async function commitFileToRepo(content) {
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
   const encodedContent = Buffer.from(content).toString('base64');
 
-  // Obtém o SHA do arquivo se existir
   let sha = null;
-  const shaResponse = await axios.get(apiUrl, {
-    headers: {
-      Authorization: `token ${GH_PAT}`,
-      Accept: 'application/vnd.github.v3+json'
+  try {
+    const shaResponse = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `token ${GH_PAT}`,
+        Accept: 'application/vnd.github.v3+json'
+      },
+      params: {
+        ref: GITHUB_BRANCH
+      }
+    });
+    if (shaResponse.status === 200) {
+      sha = shaResponse.data.sha;
     }
-  }).catch(() => null);
-  if (shaResponse && shaResponse.data) {
-    sha = shaResponse.data.sha;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.log("ℹ️ Arquivo não encontrado, será criado um novo");
+    } else {
+      throw new Error(`Erro ao buscar SHA: ${error.message}`);
+    }
   }
 
-  // Formata a data e hora atual separadamente (fuso: America/Sao_Paulo)
   const today = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
   const now = new Date().toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
   const commitMessage = `🔄 Atualização automática! Em ${today}, ${now}.`;
