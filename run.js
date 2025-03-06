@@ -1,7 +1,8 @@
+const fs = require('fs');
 const axios = require('axios');
 
 const API_AUTHORIZATION = process.env.API_AUTHORIZATION;
-const GH_PAT = process.env.GH_PAT; // Seu token do GitHub
+const GH_PAT = process.env.GH_PAT; // GitHub Personal Access Token
 
 if (!API_AUTHORIZATION) {
   console.error("❌ ERRO: A variável de ambiente 'API_AUTHORIZATION' não está definida.");
@@ -26,6 +27,12 @@ const HEADERS = {
   "Referrer-Policy": "strict-origin-when-cross-origin"
 };
 
+const GITHUB_OWNER = "zkauaferreira"; // exatamente como na URL desejada
+const GITHUB_REPO = "310";
+const GITHUB_BRANCH = "main";
+const FILE_PATH = "gradeHoraria.json";
+const COMMIT_MESSAGE = "🔄 Atualização automática da grade horária";
+
 async function fetchAndProcessSchedule() {
   try {
     const response = await axios.get(API_URL, { headers: HEADERS });
@@ -47,27 +54,47 @@ async function fetchAndProcessSchedule() {
       throw new Error("A propriedade 'gradeHoraria' não foi encontrada em nenhum aluno.");
     }
 
-    // Agrupa as informações por dia da semana e por período
+    // Agrupa as informações por dia da semana e, dentro dele, por período.
     const grouped = {};
     for (const dia of gradeHoraria) {
       const diaSemana = dia.diaSemana;
-      if (!grouped[diaSemana]) grouped[diaSemana] = {};
+      if (!grouped[diaSemana]) {
+        grouped[diaSemana] = {};
+      }
       if (dia.turnos && Array.isArray(dia.turnos)) {
         for (const turno of dia.turnos) {
           if (turno.aulas && Array.isArray(turno.aulas)) {
             for (const aula of turno.aulas) {
               let periodoRaw = aula.periodo || "";
-              let periodo = periodoRaw ? (isNaN(parseInt(periodoRaw)) ? periodoRaw : `Periodo-${parseInt(periodoRaw)}`) : "Sem-Periodo";
+              let periodo;
+              if (periodoRaw) {
+                const num = parseInt(periodoRaw);
+                periodo = isNaN(num) ? periodoRaw : `Periodo-${num}`;
+              } else {
+                periodo = "Sem-Periodo";
+              }
               
               let disciplina = aula.disciplina;
-              if (disciplina === "Língua Estrangeira - Língua Inglesa") disciplina = "Inglês";
-              if (disciplina === "Resolução de Problemas") disciplina = "Res. de Problemas";
-              if (disciplina === "Língua Portuguesa") disciplina = "Português";
-              if (disciplina === "Arte") disciplina = "Artes";
+              if (disciplina === "Língua Estrangeira - Língua Inglesa") {
+                disciplina = "Inglês";
+              }
+              if (disciplina === "Resolução de Problemas") {
+                disciplina = "Res. de Problemas";
+              }
+              if (disciplina === "Língua Portuguesa") {
+                disciplina = "Português";
+              }
+              if (disciplina === "Arte") {
+                disciplina = "Artes";
+              }
               
               let horaFimPeriodo = aula.horaFimPeriodo;
-              if (periodo === "Periodo-3") horaFimPeriodo = "10:05";
-              if (periodo === "Periodo-6") horaFimPeriodo = "12:30";
+              if (periodo === "Periodo-3") {
+                horaFimPeriodo = "10:05";
+              }
+              if (periodo === "Periodo-6") {
+                horaFimPeriodo = "12:30";
+              }
 
               if (!grouped[diaSemana][periodo]) {
                 grouped[diaSemana][periodo] = {
@@ -88,50 +115,64 @@ async function fetchAndProcessSchedule() {
     for (const dia in grouped) {
       const periodosArray = [];
       for (const periodo in grouped[dia]) {
-        periodosArray.push({ periodo, ...grouped[dia][periodo] });
+        periodosArray.push({
+          periodo,
+          ...grouped[dia][periodo]
+        });
       }
-      result.push({ diaSemana: dia, periodos: periodosArray });
+      result.push({
+        diaSemana: dia,
+        periodos: periodosArray
+      });
     }
 
     const contentString = JSON.stringify(result, null, 2);
     await commitFileToRepo(contentString);
     console.log("✅ Grade horária atualizada e commit realizado no repositório");
+
   } catch (error) {
     console.error("❌ Erro ao fazer fetch ou atualizar os dados:", error);
   }
 }
 
 async function commitFileToRepo(content) {
-  // URL fixa conforme você informou
-  const githubApiUrl = "https://api.github.com/repos/zkauaferreira/310/contents/gradeHoraria.json";
+  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`;
   const encodedContent = Buffer.from(content).toString('base64');
 
-  // Tenta obter o SHA do arquivo. Se não existir, sha ficará como null.
-  let sha = null;
-  const shaResponse = await axios.get(githubApiUrl, {
-    headers: {
-      Authorization: `token ${GH_PAT}`,
-      Accept: 'application/vnd.github.v3+json'
+  // Tenta obter o SHA do arquivo sem passar o parâmetro de branch na requisição GET
+  let sha;
+  try {
+    const getResponse = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `token ${GH_PAT}`,
+        Accept: 'application/vnd.github.v3+json'
+      }
+    }).catch(() => null);
+    sha = getResponse && getResponse.data ? getResponse.data.sha : null;
+  } catch (err) {
+    // Se o erro não for 404, lança
+    if (err.response && err.response.status !== 404) {
+      throw new Error(`Erro ao obter o SHA do arquivo: ${err.response.status} ${err.response.statusText}`);
     }
-  }).catch(() => null);
-  if (shaResponse && shaResponse.data) {
-    sha = shaResponse.data.sha;
   }
 
   const body = {
-    message: "🔄 Atualização automática da grade horária",
+    message: COMMIT_MESSAGE,
     content: encodedContent,
-    sha: sha
+    branch: GITHUB_BRANCH // Define explicitamente a branch de commit
   };
+  if (sha) {
+    body.sha = sha;
+  }
 
   try {
-    await axios.put(githubApiUrl, body, {
+    const putResponse = await axios.put(apiUrl, body, {
       headers: {
         Authorization: `token ${GH_PAT}`,
         Accept: 'application/vnd.github.v3+json'
       }
     });
-    console.log("Commit realizado com sucesso.");
+    console.log("Commit realizado com sucesso:", putResponse.data);
   } catch (err) {
     const errText = err.response ? JSON.stringify(err.response.data) : err.message;
     throw new Error(`Erro ao fazer commit: ${err.response.status} ${err.response.statusText} - ${errText}`);
