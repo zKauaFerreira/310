@@ -10,10 +10,15 @@ on:
 jobs:
   update-schedule:
     runs-on: ubuntu-latest
+    
 
     steps:
       - name: 📥 Clonar repositório
         uses: actions/checkout@v3
+        
+      - name: Configurar fuso horário para São Paulo
+        run: |
+          echo "TZ=America/Sao_Paulo" >> $GITHUB_ENV  # Define o fuso horário
 
       - name: 🛠 Configurar Node.js
         uses: actions/setup-node@v3
