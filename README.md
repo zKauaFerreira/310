@@ -1,4 +1,3 @@
-```markdown
 # 🚀 Grade Horária 310 - Documentação Técnica
 
 ![Header](https://via.placeholder.com/1920x300/2E3440/BD93F9?text=✨+SISTEMA+DE+MONITORAMENTO+DE+AULAS+EM+TEMPO+REAL+✨)
@@ -72,22 +71,6 @@ sequenceDiagram
 - 📐 **Layout Responsivo** que se adapta até em 320px  
 - 🔄 **Animações Suaves** nas transições de dia  
 
----
-
-## 🔧 **Pré-requisitos da API**
-```json
-{
-  "endpoint": "https://secweb.procergs.com.br/ise-escolars-estudante/rest/...",
-  "headers": {
-    "Authorization": "Bearer [TOKEN_SECRETO]",
-    "Content-Type": "application/json"
-  },
-  "requirements": {
-    "CPF_VÁLIDO": "05099946011",
-    "TURMA_ATIVA": "310"
-  }
-}
-```
 
 ---
 
