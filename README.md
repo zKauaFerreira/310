@@ -1,96 +1,127 @@
-# 🚀 Grade Horária 310 - Documentação Técnica
+# ✨ Grade Horária 310 ✨
+## 📚 Documentação Técnica
 
-![Header](https://via.placeholder.com/1920x300/2E3440/BD93F9?text=✨+SISTEMA+DE+MONITORAMENTO+DE+AULAS+EM+TEMPO+REAL+✨)
-
----
-
-## 🌟 **Funcionalidades Mágicas**
-- ✅ **Detecção Automática do Dia Atual**  
-- 📊 **Barra de Progresso das Aulas** (com cálculos em tempo real)  
-- 🔄 **Auto-Recarregamento** nos horários de troca de aula  
-- 📲 **Design Responsivo** (funciona até em relógio inteligente!)  
-- 🎮 **Transições Animadas** entre dias da semana  
-- 📤 **Compartilhamento Direto** via WhatsApp com formatação especial  
+![Header](https://via.placeholder.com/1920x300/2E3440/BD93F9?text=✨+MONITORAMENTO+DE+AULAS+EM+TEMPO+REAL+✨)
 
 ---
 
-## 🛠 **Arquitetura do Sistema**
+## 🚀 Funcionalidades Incríveis
+
+- **🕒 Detecção Automática do Dia Atual**  
+- **📊 Barra de Progresso em Tempo Real**  
+- **🔄 Auto-Recarregamento nos Horários de Troca de Aula**  
+- **📱 Design 100% Responsivo**  
+- **🎞 Transições Animadas**  
+- **📤 Compartilhamento Otimizado para WhatsApp**
+
+---
+
+## 🏗 Arquitetura do Sistema
+
 ```mermaid
 graph TD
-    A[API Escolars Gov] -->|JSON Bruto| B(Node.js)
-    B -->|Processamento| C[Transformação de Dados]
+    A[Endpoint não oficial 🚫] -->|JSON| B(Node.js)
+    B -->|Processamento| C[Transformação & Agrupamento]
     C --> D{gradeHoraria.json}
-    D -->|GitHub Actions| E[Deploy Automático]
+    D -->|GitHub Actions 🤖| E[Deploy Automático]
     E --> F[Frontend Dinâmico]
-    F -->|Interação| G[Usuário Feliz 😊]
+    F -->|Interação| G[Usuário Final 😊]
 ```
 
----
-
-## ⚡ **Tecnologias Nucleares**
-
-| Categoria       | Stack                                                                                   | Ícones               |
-|-----------------|-----------------------------------------------------------------------------------------|----------------------|
-| **Core**        | JavaScript ES6+, HTML5 Semântico, CSS3 Moderno                                         | 📜🎨⚡              |
-| **APIs**        | GitHub API, API Escolars (não-oficial), Font Awesome                                   | 🔗🛠️               |
-| **Efeitos**     | CSS Variables, Flexbox, Grid, Blur Effects, Keyframe Animations                        | ✨🎭                |
-| **Automação**   | GitHub Actions, Cron Jobs (para atualizações diárias)                                  | 🤖⏰                |
-| **Segurança**   | Environment Secrets, CORS Manipulation, Content Security Policy                       | 🔒🛡️               |
+> **⚠️ ATENÇÃO:**  
+> Esta aplicação utiliza um **endpoint não oficial** para obter os dados da grade horária.  
+> O serviço **pode parar de funcionar a qualquer momento** se houver alterações no endpoint!
 
 ---
 
-## 🔥 **Fluxo de Dados em Tempo Real**
+## ⚡ Tecnologias Utilizadas
+
+| Tecnologia             | Ícone |
+|------------------------|:-----:|
+| **JavaScript ES6+**    | ![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?logo=javascript&logoColor=000) |
+| **HTML5**              | ![HTML5](https://img.shields.io/badge/-HTML5-E34F26?logo=html5&logoColor=fff) |
+| **CSS3**               | ![CSS3](https://img.shields.io/badge/-CSS3-1572B6?logo=css3&logoColor=fff) |
+| **Node.js**            | ![Node.js](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=fff) |
+| **GitHub API**         | ![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github&logoColor=fff) |
+| **GitHub Actions**     | ![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-2088FF?logo=github&logoColor=fff) |
+| **Endpoint API**       | ![API](https://img.shields.io/badge/-API-000000?logo=api&logoColor=fff) |
+
+---
+
+## 🔄 Fluxo de Dados em Tempo Real
+
 ```mermaid
 sequenceDiagram
-    Gov API->>+Servidor: Requisição diária às 06:00
-    Servidor->>+Processamento: Filtra dados da turma 310
-    Processamento->>+GitHub: Commit automático via API
-    GitHub->>+Frontend: Dispara redeploy no Pages
-    Frontend->>+Usuário: Exibe dados atualizados!
+    Endpoint não oficial ->>+ Servidor: Requisição diária (06:00)
+    Servidor ->>+ Processamento: Filtra dados da Turma 310
+    Processamento ->>+ GitHub: Commit automático via API
+    GitHub ->>+ Frontend: Redeploy no GitHub Pages
+    Frontend ->>+ Usuário: Exibe dados atualizados 🎉
 ```
 
 ---
 
-## 🚨 **Aviso Crítico** 
-<div align="center" style="border: 2px solid #BD93F9; padding: 15px; border-radius: 10px; margin: 20px 0;">
-  <h3 style="color: #EF5656;">⚠️ ALERTA DE INSTABILIDADE</h3>
-  <p>Este projeto utiliza endpoints <strong>não documentados</strong> do governo!<br> 
-  Qualquer mudança na API oficial pode <em>quebrar totalmente o sistema</em> sem aviso prévio!<br>
-  🕵️♂️ Mantenha-se atualizado pelo <a href="https://t.me/grade310">Canal do Telegram</a></p>
+## 🎨 Interface do Usuário
+
+- **🌙 Dark Mode Automático**  
+- **💡 Efeitos Neon e Blur Dinâmico**  
+- **📐 Layout 100% Responsivo**  
+- **📤 Compartilhamento via WhatsApp**
+
+<div align="center">
+  <img src="https://via.placeholder.com/800x450/2E3440/BD93F9?text=Interface+Moderna" alt="UI Preview" style="border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.3);">
 </div>
 
 ---
 
-## 🎮 **Interface do Usuário**
-![UI Preview](https://via.placeholder.com/800x450/2E3440/BD93F9?text=Dark+Mode+Moderno+📱+Fácil+de+Usar)
+## 🚨 Aviso Importante
 
-### Recursos Visuais:
-- 🌓 **Dark Mode Automático**  
-- 📌 **Efeito Neon** nos elementos interativos  
-- 🌀 **Blur Dinâmico** no modal de detalhes  
-- 📐 **Layout Responsivo** que se adapta até em 320px  
-- 🔄 **Animações Suaves** nas transições de dia  
-
+> **⚠️ ATENÇÃO:**  
+> Esta aplicação utiliza um **endpoint não oficial** para obter a grade horária.  
+> **O endpoint pode ser descontinuado ou alterado sem aviso prévio**, impactando o funcionamento do sistema!  
+> Mantenha-se atento às atualizações e verifique regularmente o status do serviço.
 
 ---
 
-## 📜 **Licenciamento**
+## 📜 Licença
+
 <div align="center">
   <img src="https://img.shields.io/badge/Licença-MIT-purple?style=for-the-badge&logo=open-source-initiative" alt="MIT License">
-  <p>🔓 Use, modifique e distribua livremente - perfeito para estudos de integração com APIs governamentais!</p>
+  <p>Uso livre, modificação e distribuição. Perfeito para estudos e integrações com APIs.</p>
 </div>
 
 ---
 
-## 👨💻 **Créditos Épicos**
-- **Desenvolvedor Principal**: [Kauã "O Mago do JSON" Ferreira](https://github.com/zKauaFerreira) 🧙♂️  
-- **Apoio Técnico**: Comunidade [@he4rt](https://github.com/he4rt) ❤️  
-- **Beta Testers**: Turma 310 🧪🔍  
+## 👨‍💻 Créditos
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/zKauaFerreira">
+          <img src="https://avatars.githubusercontent.com/u/13006795?v=4" width="100" style="border-radius: 50%;"><br>
+          <strong>Kauã Ferreira</strong>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/he4rt">
+          <img src="https://avatars.githubusercontent.com/u/10360088?v=4" width="100" style="border-radius: 50%;"><br>
+          <strong>@he4rt</strong>
+        </a>
+      </td>
+      <td align="center">
+        <img src="https://via.placeholder.com/100?text=310" width="100" style="border-radius: 50%;"><br>
+        <strong>Turma 310</strong>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
-🔗 **Acesso Imediato**: [https://zkauaferreira.github.io/310](https://zkauaferreira.github.io/310)  
-📈 **Estatísticas Vivas**: 
-![Visitas](https://komarev.com/ghpvc/?username=zKauaFerreira-310&color=blueviolet&style=flat-square)
-![Última Atualização](https://img.shields.io/badge/Última_Atualização-🟢_Online-green?style=flat-square)
-```
+## 🔗 Links Úteis
+
+- **Acesse o Projeto:** [https://zkauaferreira.github.io/310](https://zkauaferreira.github.io/310)  
+- **Estatísticas:**  
+  <img src="https://komarev.com/ghpvc/?username=zKauaFerreira-310&color=blueviolet&style=flat-square" alt="Visitas">
+  <img src="https://img.shields.io/badge/Última_Atualização-🟢_Online-green?style=flat-square" alt="Última Atualização">
