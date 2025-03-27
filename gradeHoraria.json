@@ -1,22 +1,24 @@
-´´´´[
-  {´´
+[
+  {
     "diaSemana": "Segunda-feira",
     "periodos": [
       {
         "periodo": "Periodo-1",
         "disciplina": "Matemática",
-        "horaInicioPe´´eniffer Karoline Medeiros Rosa"
+        "horaInicioPeriodo": "07:40",
+        "horaFimPeriodo": "08:30",
+        "professor": "Jeniffer Karoline Medeiros Rosa"
       },
       {
         "periodo": "Periodo-2",
         "disciplina": "Matemática",
         "horaInicioPeriodo": "08:30",
-        "horaFimPeriodo": ´´"09:20",
+        "horaFimPeriodo": "09:20",
         "professor": "Jeniffer Karoline Medeiros Rosa"
       },
       {
         "periodo": "Periodo-3",
-        "disciplina": ´´Física",
+        "disciplina": "Física",
         "horaInicioPeriodo": "09:20",
         "horaFimPeriodo": "10:05",
         "professor": "Paulo Eduardo Moncay Sartori"
@@ -41,7 +43,7 @@
         "horaInicioPeriodo": "12:00",
         "horaFimPeriodo": "12:30",
         "professor": "Paulo Eduardo Moncay Sartori"
-      }´´
+      }
     ]
   },
   {
@@ -71,7 +73,7 @@
       {
         "periodo": "Periodo-4",
         "disciplina": "Geografia",
-        "´´": "10:20",
+        "horaInicioPeriodo": "10:20",
         "horaFimPeriodo": "11:10",
         "professor": "Elaine de Fatima Pereira Culau"
       },
@@ -96,7 +98,7 @@
     "periodos": [
       {
         "periodo": "Periodo-1",
-        "disciplina": ´´"História",
+        "disciplina": "História",
         "horaInicioPeriodo": "07:40",
         "horaFimPeriodo": "08:30",
         "professor": "Genuisso de Oliveira Coimbra"
@@ -121,7 +123,7 @@
         "horaInicioPeriodo": "10:20",
         "horaFimPeriodo": "11:10",
         "professor": "Genuisso de Oliveira Coimbra"
-      },´´
+      },
       {
         "periodo": "Periodo-5",
         "disciplina": "Biologia",
@@ -135,7 +137,7 @@
         "horaInicioPeriodo": "12:00",
         "horaFimPeriodo": "12:30",
         "professor": "Ricardo Barbosa Conti"
-      ´´
+      }
     ]
   },
   {
@@ -160,7 +162,7 @@
         "disciplina": "Inglês",
         "horaInicioPeriodo": "09:20",
         "horaFimPeriodo": "10:05",
-        "professor": "Fe´´rnanda dos Santos Lemos"
+        "professor": "Fernanda dos Santos Lemos"
       },
       {
         "periodo": "Periodo-4",
@@ -180,7 +182,7 @@
         "periodo": "Periodo-6",
         "disciplina": "Português",
         "horaInicioPeriodo": "12:00",
-        "horaFimPeriodo´´´´": "12:30",
+        "horaFimPeriodo": "12:30",
         "professor": "Maria Eloisa Rodrigues Nunes"
       }
     ]
@@ -232,4 +234,4 @@
       }
     ]
   }
-]  ´´´´´´
+]
