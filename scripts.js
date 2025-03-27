@@ -15,17 +15,19 @@ document.addEventListener('DOMContentLoaded', function() {
   let activeDay = null;
   const reloadTimes = ['7:40', '8:30', '9:20', '10:20', '11:10', '12:00', '12:30'];
   let lastReloadCheck = '';
+  let isAnimating = false; // Flag para controlar se uma animação está ocorrendo
 
   // Atualiza o tempo real a cada segundo
   setInterval(() => {
     currentTime = new Date();
     
-    // Verifica se precisa recarregar
+    // Verifica se precisa recarregar apenas no segundo 1 do minuto
     const currentHours = currentTime.getHours().toString().padStart(2, '0');
     const currentMinutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const currentSeconds = currentTime.getSeconds();
     const current = `${currentHours}:${currentMinutes}`;
     
-    if(reloadTimes.includes(current) && current !== lastReloadCheck) {
+    if(reloadTimes.includes(current) && currentSeconds === 1 && current !== lastReloadCheck) {
       lastReloadCheck = current;
       location.reload();
     }
@@ -153,8 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (diaSemana === currentDay && isCurrentPeriod(periodo, currentTime)) {
         periodoElement.classList.add('current-period');
         periodoElement.periodoData = periodo;
-        periodoElement.querySelector('div:last-child').style.fontSize = '1.8em'
-        periodoElement.querySelector('div:last-child').style.fontWeight = '700'
+        periodoElement.querySelector('div:last-child').style.fontSize = '1.8em';
+        periodoElement.querySelector('div:last-child').style.fontWeight = '700';
         periodoElement.style.backgroundColor = 'rgba(189, 147, 249, 0.2)';
         periodoElement.style.position = 'relative';
         periodoElement.style.border = '2px solid #BD93F9';
@@ -227,8 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   `;
   
-  
-  
     modal.classList.add('active');
     document.body.classList.add('modal-open');
     
@@ -236,7 +236,6 @@ document.addEventListener('DOMContentLoaded', function() {
     newModalClose.addEventListener('click', closeModal);
   }
   
-
   function closeModal() {
     modal.classList.remove('active');
     document.body.classList.remove('modal-open');
@@ -304,4 +303,92 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Erro ao compartilhar:', err);
     }
   }
-});  
+
+  // =============================================
+  // NOVA FEATURE: Mobile Swipe com animação de transição,
+  // bloqueio do scroll vertical e desabilitação de novos swipes enquanto animação estiver ocorrendo
+  // =============================================
+  let touchstartX = 0;
+  let touchstartY = 0;
+  let touchendX = 0;
+  const minSwipeDistance = 50; // distância mínima para considerar o swipe
+
+  // Detecta o início do toque e armazena as coordenadas
+  document.addEventListener('touchstart', function(e) {
+    touchstartX = e.changedTouches[0].screenX;
+    touchstartY = e.changedTouches[0].screenY;
+  }, false);
+
+  // Se for swipe horizontal, previne o scroll vertical
+  document.addEventListener('touchmove', function(e) {
+    const dx = e.changedTouches[0].screenX - touchstartX;
+    const dy = e.changedTouches[0].screenY - touchstartY;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // Detecta o final do toque e processa o swipe
+  document.addEventListener('touchend', function(e) {
+    touchendX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, false);
+
+  function handleSwipe() {
+    if(isAnimating) return; // Ignora se uma animação já estiver ocorrendo
+    const deltaX = touchstartX - touchendX;
+    if (Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0) {
+        // Swipe da direita para a esquerda: próxima dia (só se não for o último)
+        goToNextDay();
+      } else {
+        // Swipe da esquerda para a direita: dia anterior (só se não for o primeiro)
+        goToPreviousDay();
+      }
+    }
+  }
+
+  function animateScheduleTransition(newButton, direction) {
+    if(isAnimating) return;
+    isAnimating = true;
+    const container = document.getElementById('schedule-container');
+    // Adiciona classe para desabilitar sombra dos cartões durante a transição
+    container.classList.add('transitioning');
+    let outClass, inClass;
+    if (direction === 'next') {
+      outClass = 'slide-out-left';
+      inClass = 'slide-in-right';
+    } else {
+      outClass = 'slide-out-right';
+      inClass = 'slide-in-left';
+    }
+    container.classList.add(outClass);
+    container.addEventListener('animationend', function handler() {
+      container.removeEventListener('animationend', handler);
+      // Atualiza o conteúdo do dia simulando o clique no botão
+      newButton.click();
+      container.classList.remove(outClass);
+      container.classList.add(inClass);
+      container.addEventListener('animationend', function handler2() {
+        container.removeEventListener('animationend', handler2);
+        container.classList.remove(inClass);
+        container.classList.remove('transitioning');
+        isAnimating = false;
+      });
+    });
+  }
+
+  function goToNextDay() {
+    const buttons = Array.from(dayNav.querySelectorAll('button'));
+    const currentIndex = buttons.findIndex(btn => btn.classList.contains('active'));
+    if (currentIndex === -1 || currentIndex === buttons.length - 1) return;
+    animateScheduleTransition(buttons[currentIndex + 1], 'next');
+  }
+
+  function goToPreviousDay() {
+    const buttons = Array.from(dayNav.querySelectorAll('button'));
+    const currentIndex = buttons.findIndex(btn => btn.classList.contains('active'));
+    if (currentIndex === -1 || currentIndex === 0) return;
+    animateScheduleTransition(buttons[currentIndex - 1], 'prev');
+  }
+});

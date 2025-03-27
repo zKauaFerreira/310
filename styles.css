@@ -66,12 +66,13 @@ header {
   color: #BD93F9;
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
   letter-spacing: 2px;
-  position: relative; /* Adicionado para posicionamento do botão */
+  position: relative;
 }
 
 .header-title {
   display: inline-block;
 }
+
 .period-progress {
   position: absolute;
   bottom: 0;
@@ -86,9 +87,7 @@ header {
 .cardDisciplinaContainer {
   position: relative;
   overflow: hidden;
-  
 }
-
 
 /* Botão de Compartilhar */
 #share-btn {
@@ -106,7 +105,7 @@ header {
 
 /* Day Navigation */
 #day-nav {
-  position: relative; /* necessário para posicionar a barra ativa */
+  position: relative;
   display: flex;
   width: 100%;
   justify-content: center;
@@ -133,13 +132,11 @@ header {
   background-color: rgba(189, 147, 249, 0.2);
   border: 2px solid #BD93F9;
   box-shadow: 0 0 15px rgba(189, 147, 249, 0.4);
-
   backface-visibility: hidden;
 }
 
 #day-nav button:hover {
   background-color: rgba(189, 147, 249, 0.2);
-
   backface-visibility: hidden;
 }
 
@@ -157,6 +154,11 @@ main {
   flex-direction: column;
   gap: 10px;
   width: 100%;
+}
+
+/* Durante transição, remove a sombra dos cartões */
+#schedule-container.transitioning .cardDisciplinaContainer {
+  box-shadow: none !important;
 }
 
 /* Card for each period */
@@ -181,17 +183,15 @@ main {
 }
 
 /* Ajuste: Removida a rotação para que as horas apareçam na orientação correta */
-
 .cardDisciplinaContainer > div:first-child {
   font-size: 1.5em;
   font-weight: bold;
   color: #BD93F9;
-  writing-mode: vertical-rl; /* Mantém o texto na vertical */
+  writing-mode: vertical-rl;
   text-orientation: mixed;
-  transform: rotate(180deg); /* Inverte a orientação */
+  transform: rotate(180deg);
   margin-right: 20px;
 }
-
 
 .cardDisciplinaContainer > div:last-child {
   font-size: 2em;
@@ -316,26 +316,23 @@ main {
 .close:hover {
   color: #EF5656;
 }
+
 /* Estilização dos ícones dentro do modal */
 .info-icon {
   display: inline-block;
-  width: 30px;           /* Largura fixa para os ícones; ajuste conforme necessário */
-  text-align: center;    /* Centraliza o ícone dentro do espaço */
+  width: 30px;
+  text-align: center;
 }
 
-
-/* Espaçamento entre as linhas do modal */
 .modal-content div {
   margin: 10px 0;
 }
 
-/* Caso queira manter o estilo dos ícones anteriores também */
 .modal-content i.fa {
-  color: #c5c5c5;        /* Cor dos ícones para manter o destaque do site */
+  color: #c5c5c5;
   font-size: 1.2em;
   vertical-align: middle;
 }
-
 
 #share-btn {
   background: transparent;
@@ -399,8 +396,68 @@ main {
     padding: 20px;
   }
   
-  /* Para mobile: usa scroll ao invés de fixed para evitar o flicker */
   body {
     background-attachment: scroll;
   }
+}
+
+/* Animações para transição de dias */
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-out-left {
+  animation: slideOutLeft 0.3s forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s forwards;
+}
+
+.slide-out-right {
+  animation: slideOutRight 0.3s forwards;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.3s forwards;
 }
